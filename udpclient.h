@@ -9,6 +9,7 @@
 
 void udp_msg_sender(struct sockaddr* dst);
 int udp_init(struct sockaddr_in* ser_addr);
+void inttostr(char *p, int num);     //int型转换3位字符串
 
 extern int client_fd;
 

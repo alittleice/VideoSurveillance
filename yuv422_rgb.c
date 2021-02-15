@@ -124,6 +124,8 @@ int v4l2_init()
 	}
 
 }
+
+struct v4l2_buffer  readbuffer;
 int video_capture(void)
 {
 	//6.开始采集
@@ -139,7 +141,7 @@ int video_capture(void)
 	{
 
 		//7.从队列中提取一帧数据
-		struct v4l2_buffer  readbuffer;
+		//struct v4l2_buffer  readbuffer;
 		readbuffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		ret = ioctl(v4l2_fd, VIDIOC_DQBUF, &readbuffer);
 		if(ret < 0)
@@ -160,10 +162,12 @@ int video_capture(void)
 	fclose(file2);
 #endif
 		yuyv_to_rgb(mptr[readbuffer.index], rgbdata, camera_w, camera_h);
-		if(readbuffer.length/2*3 == sizeof(rgbdata))
-			printf("rgb图像大小:%d\n", sizeof(rgbdata));
-		else
-			printf("图像大小错误!\n");
+		
+		//检测数据大小是否正常
+		// if(readbuffer.length/2*3 == sizeof(rgbdata))
+		// 	printf("rgb图像大小:%d\n", sizeof(rgbdata));
+		// else
+		// 	printf("图像大小错误!\n");
 
 		//通知内核已经使用完毕
 		ret = ioctl(v4l2_fd, VIDIOC_QBUF, &readbuffer);
@@ -173,12 +177,18 @@ int video_capture(void)
 		}
 
 	}
+	return 0;
+}
+
+void v4l2_close()
+{
+	int ret;
 	//8.停止采集
-	ret = ioctl(v4l2_fd, VIDIOC_STREAMOFF, &type);
+	ret = ioctl(v4l2_fd, VIDIOC_STREAMOFF, &readbuffer.type);
 	if(ret < 0)
-		{
-			perror("VIDIOC_STREAMOFF 失败");
-		}
+	{
+		perror("VIDIOC_STREAMOFF 失败");
+	}
 
 	//9.释放映射
 	int i;
@@ -187,6 +197,4 @@ int video_capture(void)
 
 	//10.关闭设备
 	close(v4l2_fd);
-
-	return 0;
 }

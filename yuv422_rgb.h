@@ -18,6 +18,7 @@
 void yuyv_to_rgb(unsigned char *yuyvdata, unsigned char *rgbdata, int w, int h);
 int v4l2_init();
 int video_capture();
+void v4l2_close();
 
 //定义一个空间解码后的RGB数组
 unsigned char rgbdata[camera_w*camera_h*3];
@@ -25,5 +26,6 @@ unsigned char rgbdata[camera_w*camera_h*3];
 extern int v4l2_fd;
 extern unsigned char *mptr[4];//保存映射后用户空间的首地址
 extern unsigned int  size[4];
+
 
 #endif // !UDPCLINT_H_#define 
